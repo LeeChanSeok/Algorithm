@@ -8,8 +8,6 @@ public class Main {
 	public static int count, N;
 	
 	public static void recursive(int sx, int sy, int dir) {
-
-		
 		//경계 밖을 나갔을 경우
 		if(sx < 1 || sx >N || sy < 1|| sy > N) return;
 		
@@ -29,15 +27,12 @@ public class Main {
 		
 		if (dir - 1 >= 0) recursive(sx + dx[dir - 1], sy + dy[dir - 1], dir - 1);
 		recursive(sx + dx[dir], sy + dy[dir], dir);
-		if (dir + 1 <= 2) recursive(sx + dx[dir + 1], sy + dy[dir + 1], dir + 1);		
-		
+		if (dir + 1 <= 2) recursive(sx + dx[dir + 1], sy + dy[dir + 1], dir + 1);	
 	}
 	
 	public static void main(String[] args) {
-		//System.setIn(new FileInputStream("src/com/baekjoon/gold/input.txt"));
 		Scanner sc = new Scanner(System.in);
 		
-		//int T = sc.nextInt();
 		int T = 1;
 		for(int tc = 1; tc <= T; tc++) {
 			N = sc.nextInt();
@@ -57,7 +52,6 @@ public class Main {
 			
 			recursive(sx, sy, dir);
 			
-			//System.out.printf("#%d %d\n",tc,count);
 			System.out.println(count);			
 		}
 	}
