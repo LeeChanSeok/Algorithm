@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -14,8 +15,8 @@ public class Solution {
 		int N;
 		char[] brackets;
 		char bk;
-		
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
 		List<Character> open = Arrays.asList('(', '<', '{', '[');
 		List<Character> close = Arrays.asList(')', '>', '}', ']');
@@ -25,6 +26,7 @@ public class Solution {
 			res = 1;
 			N = Integer.parseInt(br.readLine());
 			brackets = br.readLine().toCharArray();
+			stack = new Stack<>();
 			
 			for(int i = 0; i < N; i++) {
 				bk = brackets[i];
@@ -34,9 +36,16 @@ public class Solution {
 						res = 0;
 						break;
 					}
-				}								
-			}		
+				}
+				if(stack.size() > N/2) {
+					System.out.println(stack.size());
+					res = 0;
+					break;
+				}
+			}
+			if(!stack.isEmpty()) res = 0;
 			System.out.printf("#%d %d\n",tc, res);
 		}
 	}
+
 }
