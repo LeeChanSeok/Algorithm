@@ -15,8 +15,8 @@ public class Solution {
 		int N;
 		char[] brackets;
 		char bk;
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
 		List<Character> open = Arrays.asList('(', '<', '{', '[');
 		List<Character> close = Arrays.asList(')', '>', '}', ']');
@@ -38,7 +38,6 @@ public class Solution {
 					}
 				}
 				if(stack.size() > N/2) {
-					System.out.println(stack.size());
 					res = 0;
 					break;
 				}
@@ -46,6 +45,7 @@ public class Solution {
 			if(!stack.isEmpty()) res = 0;
 			System.out.printf("#%d %d\n",tc, res);
 		}
+		
 	}
 
 }
