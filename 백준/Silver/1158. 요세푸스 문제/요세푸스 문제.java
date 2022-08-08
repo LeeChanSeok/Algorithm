@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -8,29 +10,22 @@ public class Main {
 		int K = sc.nextInt();
 		
 		int remove = 0;
-		int idx = 1;
 		int cnt = 0;
-		boolean[] isRemove = new boolean[N+1];
+		List<Integer> arr = new LinkedList<>();
+		
+		for(int i = 1; i <= N; i++)
+			arr.add(i);
 		
 		System.out.print("<");
+		int idx = 0;
 		while(remove != N) {
-			if(!isRemove[idx]) cnt++;
-			
-			if(cnt == K) {
-				isRemove[idx] = true;
-				remove++;
-				if(remove == N)
-					System.out.print(idx);
-				else
-					System.out.print(idx + ", ");
-				cnt = 0;
-			}
-			
-			idx++;
-			if(idx == N+1) idx = 1;
+			idx = (idx + K-1) % (N - remove);
+			remove++;
+			if(remove == N)
+				System.out.print(arr.remove(idx));
+			else
+				System.out.print(arr.remove(idx) +", ");
 		}
 		System.out.println(">");
-		
 	}
-	
 }
