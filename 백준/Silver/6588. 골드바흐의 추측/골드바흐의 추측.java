@@ -25,13 +25,13 @@ public class Main {
 		while((number = Integer.parseInt(br.readLine()))!=0) {
 			for(i = 3; i <= number/2; i+=2) {
 				if(!prime[i] && !prime[number-i]) {
-					sb.append(String.format("%d = %d + %d\n", number, i, number -i));
+					//sb.append(String.format("%d = %d + %d\n", number, i, number -i));
+					sb.append(number).append(" = ").append(i).append(" + ").append(number - i).append("\n");
 					break;
 				}
 			}
 			if(i > number/2) sb.append("Goldbach's conjecture is wrong.\n");
 		}
-		System.out.println(sb);
+		System.out.println(sb.toString());
 	}
-
 }
