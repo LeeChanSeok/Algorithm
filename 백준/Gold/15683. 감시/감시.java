@@ -22,100 +22,17 @@ public class Main {
 	public static int N, M;
 	public static int[][] map;
 	public static int totalCnt, max;
-	public static int[] order;
-	public static List<List<List<Integer>>> cctvDir;
-	public static List<List<Integer>> cctvNum;
-	public static List<Integer> dir;
+	public static int[][][] cctvDir2;
+
 	public static List<CCTV> cctvs;
-	public static int[] dx = {0, 1, 0, -1};
-	public static int[] dy = {1, 0, -1, 0};
-	public static int[] command = {4, 2, 4, 4, 1};
+	public static int[] dx = { 0, 1, 0, -1 };
+	public static int[] dy = { 1, 0, -1, 0 };
+	public static int[] command = { 4, 2, 4, 4, 1 };
 
-	public static void arrayinit() {
-		// 전체 List
-		cctvDir = new ArrayList<>();
-
-		// 1번에 해당하는 list
-		cctvNum = new ArrayList<>();
-
-		// 1번 안 List
-		dir = new ArrayList<>();
-		dir.add(0);
-		cctvNum.add(dir);
-		dir = new ArrayList<>();
-		dir.add(1);
-		cctvNum.add(dir);
-		dir = new ArrayList<>();
-		dir.add(2);
-		cctvNum.add(dir);
-		dir = new ArrayList<>();
-		dir.add(3);
-		cctvNum.add(dir);
-
-		cctvDir.add(cctvNum);
-
-		// 2번에 해당하는 list
-		cctvNum = new ArrayList<>();
-
-		// 2번 안 List
-		dir = new ArrayList<>();
-		dir.add(0);
-		dir.add(2);
-		cctvNum.add(dir);
-		dir = new ArrayList<>();
-		dir.add(1);
-		dir.add(3);
-		cctvNum.add(dir);
-
-		cctvDir.add(cctvNum);
-
-		// 3번에 해당하는 list
-		cctvNum = new ArrayList<>();
-
-		// 3번 안 List
-		dir = new ArrayList<>();
-		dir.add(0);	dir.add(1);
-		cctvNum.add(dir);
-		dir = new ArrayList<>();
-		dir.add(1);	dir.add(2);
-		cctvNum.add(dir);
-		dir = new ArrayList<>();
-		dir.add(2);	dir.add(3);
-		cctvNum.add(dir);
-		dir = new ArrayList<>();
-		dir.add(3);	dir.add(0);
-		cctvNum.add(dir);
-		
-		cctvDir.add(cctvNum);
-		
-		// 4번에 해당하는 list
-		cctvNum = new ArrayList<>();
-
-		// 4번 안 List
-		dir = new ArrayList<>();
-		dir.add(0); dir.add(1);	dir.add(2);
-		cctvNum.add(dir);
-		dir = new ArrayList<>();
-		dir.add(1); dir.add(2);	dir.add(3);
-		cctvNum.add(dir);
-		dir = new ArrayList<>();
-		dir.add(2); dir.add(3);	dir.add(0);
-		cctvNum.add(dir);
-		dir = new ArrayList<>();
-		dir.add(3); dir.add(0);	dir.add(1);			
-		cctvNum.add(dir);
-		
-		cctvDir.add(cctvNum);
-		
-		// 5번에 해당하는 list
-		cctvNum = new ArrayList<>();
-
-		// 5번 안 List
-		dir = new ArrayList<>();
-		dir.add(0); dir.add(1);	dir.add(2);	dir.add(3);
-		cctvNum.add(dir);
-		
-		cctvDir.add(cctvNum);
+	public static void init() {
+		cctvDir2 = new int[][][] { { { 0 }, { 1 }, { 2 }, { 3 } }, { { 0, 2 }, { 1, 3 } },
+				{ { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 0 } }, { { 0, 1, 2 }, { 1, 2, 3 }, { 2, 3, 0 }, { 3, 0, 1 } },
+				{ { 0, 1, 2, 3 } } };
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -124,84 +41,81 @@ public class Main {
 
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
-		arrayinit();
-		
+		init();
 		cctvs = new ArrayList<>();
 
 		map = new int[N][M];
 		int input;
-		totalCnt = N*M;
+		totalCnt = N * M;
 		for (int i = 0; i < N; i++) {
 
 			st = new StringTokenizer(br.readLine());
 			for (int j = 0; j < M; j++) {
 				input = Integer.parseInt(st.nextToken());
 				map[i][j] = input;
-				if (input == 6) totalCnt--;
+				if (input == 6)
+					totalCnt--;
 				else if (input != 0) {
-					cctvs.add(new CCTV(input-1, i, j));
+					cctvs.add(new CCTV(input - 1, i, j));
 					map[i][j] = 0;
 				}
 			}
 
 		}
-		
-		//
+
 		max = 0;
-		order = new int[cctvs.size()];
-		dfs(0);
+		dfs(0, 0, map);
 		System.out.println(totalCnt - max);
-		
-	}
-	
-	
-	public static int watch() {
-		int res = 0;
-		int[][] new_map = new int[N][M];
-		
-		for(int i = 0; i < N; i++)
-			new_map[i] = Arrays.copyOf(map[i], map[i].length);
-		
-		for(int i = 0, cSize = cctvs.size(); i < cSize; i++) {
-			CCTV cctv = cctvs.get(i);
-			List<Integer> list = cctvDir.get(cctv.num).get(order[i]);
-			
-			for(int j = 0, lSize = list.size(); j < lSize; j++) {
-				int dir = list.get(j);
-				
-				int nx = cctv.x, ny = cctv.y;
-				do{
-					
-					if(nx < 0 || nx >= N || ny < 0 || ny  >= M || new_map[nx][ny] == 6) break;
-					
-					if(new_map[nx][ny] == 0) {
-						res++;
-						new_map[nx][ny] = -1;
-					}
-					
-					nx += dx[dir]; ny += dy[dir];
-					
-				}while(true);
-				
-			}
-			
-		}
-		
-		return res;
-	}
-	
-	public static void dfs(int cnt) {
-		if( cnt == order.length) {
-			max = Math.max(max, watch());
-			return;
-		}
-		
-		int cctvN = cctvs.get(cnt).num;
-		for(int i = 0; i < command[cctvN]; i++) {
-			order[cnt] = i;
-			dfs(cnt+1);
-		}
-		
+
 	}
 
+	public static void dfs(int cnt, int res, int[][] map) {
+		if (cnt == cctvs.size()) {
+			max = Math.max(max, res);
+			return;
+		}
+
+		int cctvN = cctvs.get(cnt).num;
+		int[][] new_map;
+		for (int i = 0; i < command[cctvN]; i++) {
+			new_map = new int[N][M];
+			arrCopy(map, new_map);
+			dfs(cnt + 1, res + watch(new_map, cnt, i), new_map);
+		}
+
+	}
+
+	public static void arrCopy(int[][] map, int[][] new_map) {
+		for (int i = 0; i < N; i++)
+			new_map[i] = Arrays.copyOf(map[i], map[i].length);
+	}
+
+	public static int watch(int[][] map, int cnt, int dirIdx) {
+		int res = 0;
+
+		CCTV cctv = cctvs.get(cnt);
+		int[] arr = cctvDir2[cctv.num][dirIdx];
+		for (int j = 0, aSize = arr.length; j < aSize; j++) {
+			int dir = arr[j];
+
+			int nx = cctv.x, ny = cctv.y;
+			do {
+
+				if (nx < 0 || nx >= N || ny < 0 || ny >= M || map[nx][ny] == 6)
+					break;
+
+				if (map[nx][ny] == 0) {
+					res++;
+					map[nx][ny] = -1;
+				}
+
+				nx += dx[dir];
+				ny += dy[dir];
+
+			} while (true);
+
+		}
+
+		return res;
+	}
 }
