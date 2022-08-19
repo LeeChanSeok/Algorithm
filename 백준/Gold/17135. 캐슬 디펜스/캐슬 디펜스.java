@@ -1,10 +1,10 @@
-import java.io.FileInputStream;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
+import java.util.StringTokenizer;
 
 class Person {
 	public int id;
@@ -14,11 +14,6 @@ class Person {
 		this.x = x;
 		this.y = y;
 		this.id = id;
-	}
-
-	@Override
-	public String toString() {
-		return "Person [id=" + id + ", x=" + x + ", y=" + y + "]";
 	}
 }
 
@@ -31,13 +26,15 @@ public class Main {
 	public static int nEnermy;
 	public static int res;
 	public static int INF = 987654321;
-
-	public static int playGame(boolean[] isArcher) {
+	static int[] isArcher;
+	
+	
+	public static int playGame(int flag) {
 		int cnt = 0;
 
 		Archers.clear();
 		for (int j = 0; j < M; j++) {
-			if (isArcher[j]) {
+			if ((flag & 1 << j) != 0) {
 				Archers.add(new Person(N, j, 0));
 			}
 		}
@@ -102,55 +99,46 @@ public class Main {
 		return cnt;
 	}
 
-	public static void recursive(boolean[] isArcher, int idx, int count) {
+	public static void recursive(int idx, int cnt, int flag) {
 		// 마지막에 도착한 경우
-		if (idx == M && count != 3)
-			return;
-
-		// 궁수 배치가 모드 끝난 경우
-		if (count == 3) {
-			max = Math.max(max, playGame(isArcher));
+		if (cnt == 3) {
+			max = Math.max(max, playGame(flag));
 			return;
 		}
 
-		isArcher[idx] = true;
-		recursive(isArcher, idx + 1, count + 1);
-		isArcher[idx] = false;
-		recursive(isArcher, idx + 1, count);
+		for(int i = idx; i < M; i++) {
+			if((flag & 1 << i) != 0) continue;
+			recursive(i + 1, cnt + 1, flag | 1 << i);
+		}
 
 	}
 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws IOException {
 		//System.setIn(new FileInputStream("src/day3/input.txt"));
-		Scanner sc = new Scanner(System.in);
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
 
-		//int T = sc.nextInt();
-		int T=1;
-		for (int tc = 1; tc <= T; tc++) {
-			N = sc.nextInt();
-			M = sc.nextInt();
-			D = sc.nextInt();
+			N = Integer.parseInt(st.nextToken());
+			M = Integer.parseInt(st.nextToken());
+			D = Integer.parseInt(st.nextToken());
 
-			int[][] map = new int[N][M];
+			char[][] map = new char[N][M];
 
 			max = 0;
 			nEnermy = 0;
 			Enermys.clear();
 			for (int i = 0; i < N; i++) {
+				st = new StringTokenizer(br.readLine());
 				for (int j = 0; j < M; j++) {
-					map[i][j] = sc.nextInt();
-					if (map[i][j] == 1) {
+					map[i][j] = st.nextToken().charAt(0);
+					if (map[i][j] == '1') {
 						Enermys.add(new Person(i, j, ++nEnermy));
 					}
 				}
 			}
 
-			boolean[] isArcher = new boolean[M];
-			recursive(isArcher, 0, 0);
-
+			recursive(0, 0, 0);
 			System.out.println(max);
-		}
-
 	}
 
 }
