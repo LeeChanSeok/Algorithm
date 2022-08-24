@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -56,6 +57,7 @@ public class Solution {
 	}
 
 	private static void dfs(int x, int y, int level, int d) {
+		if((x- sx) < (sy - y)) return;
 		visit[map[x][y]] = true;
 
 		int nx, ny;
@@ -75,7 +77,7 @@ public class Solution {
 			if (!visit[map[nx][ny]])
 				dfs(nx, ny, level + 1, d);
 		}
-
+		
 		// 회전 판단
 		if(d < 3)
 			dfs(x, y, level, d + 1);
