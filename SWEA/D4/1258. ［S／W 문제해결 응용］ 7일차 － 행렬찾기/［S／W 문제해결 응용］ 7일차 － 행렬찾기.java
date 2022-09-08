@@ -49,11 +49,11 @@ public class Solution {
 					if(arr[i][j] == '0') continue;
 					
 					int r = 0, c = 0;
-					for(int i2 = i; i < N; ++i2, r++) {
+					for(int i2 = i; i2 < N; ++i2, r++) {
 						if(arr[i2][j] == '0') break;
 					}
 
-					for(int j2 = j; j < N; ++j2, c++) {
+					for(int j2 = j; j2 < N; ++j2, c++) {
 						if(arr[i][j2] == '0') break;
 					}
 					
