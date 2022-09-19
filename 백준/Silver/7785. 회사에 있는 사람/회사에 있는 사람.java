@@ -58,22 +58,18 @@ public class Main {
 			}
 		}
 		
-		// 떠난 사원들 List에서 제거
-		for(int i = 0; i < alphSize; ++i) {
-			ListIterator<Person> iter = alphList[i].listIterator();
-			while(iter.hasNext()) {
-				if(iter.next().leave) iter.remove();
-			}
-		}
-		
+	
 		for(int i = 0; i < alphSize; i++) {
 			Collections.sort(alphList[i], (p1, p2) -> p2.name.compareTo(p1.name));
 		}
 
 		for(int i = alphSize-1; i >= 0; --i) {
 			ListIterator<Person> iter = alphList[i].listIterator();
-			while(iter.hasNext())
-				sb.append(iter.next().name).append("\n");
+			while(iter.hasNext()) {
+				Person person = iter.next();
+				if(!person.leave)
+					sb.append(person.name).append("\n");
+			}
 		}
 		
 		bw.write(sb.toString());
