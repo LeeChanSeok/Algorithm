@@ -27,12 +27,13 @@ public class Main {
 		int N;
 		char comm; int num;
 		Number number;
-		PriorityQueue<Number> minPQ, maxPQ, tempPQ;
+		PriorityQueue<Number> minPQ = new PriorityQueue<>((n1, n2) -> n1.num < n2.num? -1 : 1);
+		PriorityQueue<Number> maxPQ = new PriorityQueue<>((n1, n2) -> n1.num < n2.num? 1 : -1);
 		for(int tc = 1; tc <= T; ++tc) {
 			N = Integer.parseInt(br.readLine());
 			
-			minPQ = new PriorityQueue<>((n1, n2) -> n1.num < n2.num? -1 : 1);
-			maxPQ = new PriorityQueue<>((n1, n2) -> n1.num < n2.num? 1 : -1);
+			minPQ.clear();
+			maxPQ.clear();
 			
 			for(int i = 0; i < N; i++) {
 				st = new StringTokenizer(br.readLine());
@@ -46,22 +47,27 @@ public class Main {
 				}
 				else {
 					
-					if(num == 1) tempPQ = maxPQ;
-					else tempPQ = minPQ;
-					
-					while(!tempPQ.isEmpty()) {
-						if(!tempPQ.peek().isDel) {
-							tempPQ.poll().isDel = true;
-							break;
+					if(num == 1) {
+						while(!maxPQ.isEmpty()) {
+							if(!maxPQ.peek().isDel) {
+								maxPQ.poll().isDel = true;
+								break;
+							}
+							maxPQ.poll();
 						}
-						tempPQ.poll();
 					}
-					
+					else {
+						while(!minPQ.isEmpty()) {
+							if(!minPQ.peek().isDel) {
+								minPQ.poll().isDel = true;
+								break;
+							}
+							minPQ.poll();
+						}
+					}
+										
 				}
 			} // 입력종료
-			
-			int max, min;
-			
 			
 			while(!maxPQ.isEmpty() && maxPQ.peek().isDel) maxPQ.poll();
 			
