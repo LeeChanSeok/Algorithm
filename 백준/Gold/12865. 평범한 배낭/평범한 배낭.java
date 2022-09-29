@@ -14,19 +14,23 @@ public class Main {
 		
 		int[] dp = new int[K+1];
 		
-		int w, v;
+		int[] w = new int[N];
+		int[] v = new int[N];
 		for(int i = 0; i < N; ++i) {
-			
 			st = new StringTokenizer(br.readLine());
-			w = Integer.parseInt(st.nextToken());
-			v = Integer.parseInt(st.nextToken());
+			w[i] = Integer.parseInt(st.nextToken());
+			v[i] = Integer.parseInt(st.nextToken());
+		}
+
+		for(int i = 0; i < N; i++) {
 			
 			for(int j = K; j >0; --j) {
-				if(w > j) break;
-				dp[j] = Math.max(dp[j], dp[j-w] + v);
+				if(w[i] > j) break;
+				dp[j] = Math.max(dp[j], dp[j-w[i]] + v[i]);
 			}
 		}
 		System.out.println(dp[K]);
+		
 	}
 
 }
