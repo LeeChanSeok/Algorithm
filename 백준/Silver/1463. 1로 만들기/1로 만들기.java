@@ -11,25 +11,12 @@ public class Main {
 		int N = Integer.parseInt(br.readLine());
 		
 		dp = new int[N+1];
-		Arrays.fill(dp, INF);
 
-		dp[1] = 0;
-		System.out.println(dfs(N));
-
+		for(int i = 1; i <= N; i++) {
+			dp[i] = dp[i-1]+1;
+			if(i%2 == 0) dp[i] = Math.min(dp[i], dp[i/2]+1);
+			if(i%3 == 0) dp[i] = Math.min(dp[i], dp[i/3]+1);
+		}
+		System.out.println(dp[N]-1);
 	}
-
-	private static int dfs(int n) {
-		
-		if(dp[n] != INF) return dp[n];
-		
-		if(n % 3 == 0) 
-			dp[n] = Math.min(dp[n], dfs(n/3)+1);
-		if(n % 2 == 0)
-			dp[n] = Math.min(dp[n], dfs(n/2)+1);
-		if(n - 1 >0)
-			dp[n] = Math.min(dp[n], dfs(n-1)+1);
-		
-		return dp[n];
-	}
-
 }
