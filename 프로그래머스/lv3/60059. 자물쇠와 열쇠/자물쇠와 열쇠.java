@@ -26,6 +26,7 @@ class Solution {
                     shiftLeft(N, M, newKeyArr);	// 일치하지 않는경우 왼쪽으로 이동
                 }
 
+                
                 shiftDown(N, M, keyArr); // 키를 한칸 아래 행으로 이동
             }while(++i < N + M - 1);
             // key 회전
