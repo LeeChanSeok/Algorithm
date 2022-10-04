@@ -122,6 +122,7 @@ public class Main {
 							ny = cur.y + dy[d];
 							if(nx < 0 || nx>=N || ny < 0 || ny >= M || visit[nx][ny] || newMap[nx][ny] != '0') continue;
 							newMap[nx][ny] = '2';
+                            visit[nx][ny] = true;
 							q.offer(new Point(nx, ny));
 						}
 					}
