@@ -31,7 +31,9 @@ public class Main {
 		int INF = Integer.MAX_VALUE;
 		Point[] positions;
 		int[][] dist;
+
 		int T = Integer.parseInt(br.readLine());
+		
 		for(int tc = 1; tc <= T; ++tc) {
 			n = Integer.parseInt(br.readLine());
 			N = n+2;
@@ -51,20 +53,23 @@ public class Main {
 			for(int i = 0; i < N; ++i) {
 				Arrays.fill(dist[i], INF);
 			}
+			for(int i = 0; i < N; ++i) {
+				for(int j = 0; j < N; ++j) {
+					if(i == j) dist[i][j] = 0;
+					else dist[i][j] = calc_dist(positions[i], positions[j]);
+				}
+			}
 			
 			for(int k = 0; k < N; ++k) {
 				for(int i = 0; i < N; ++i) {
 					for(int j = 0; j < N; ++j) {
-						if(i == j) dist[i][j] = 0;
-						else
-							dist[i][j] = Math.min(dist[i][j], calc_dist(positions[i], positions[k]) + calc_dist(positions[k], positions[j]));
+						if(i == k || j == k) continue;
+						dist[i][j] = Math.min(dist[i][j], dist[i][k] + dist[k][j]);
 					}
 				}
 			}
 			
-			boolean happy = bfs(N, positions, dist);
-			
-			if(happy) sb.append("happy\n");
+			if(bfs(N, positions, dist)) sb.append("happy\n");
 			else sb.append("sad\n");
 		}
 
