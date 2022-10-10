@@ -3,126 +3,109 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-class Point2 {
-	int x, y, cnt, k;
-
-	public Point2(int x, int y, int cnt, int k) {
-		super();
-		this.x = x;
-		this.y = y;
-		this.cnt = cnt;
-		this.k = k;
-	}
-
-	public void setPoint(Point2 p) {
-		this.x = p.x;
-		this.y = p.y;
-		this.cnt = p.cnt;
-		this.k = p.k;
-	}
-}
-
 public class Main {
 
-	static int[] hdx = { 1, 2, 2, 1, -1, -2, -2, -1 };
-	static int[] hdy = { 2, 1, -1, -2, -2, -1, 1, 2 };
+	static class Monkey {
+		int x, y, k;
 
-	static int[] dx = { 0, 1, 0, -1 };
-	static int[] dy = { 1, 0, -1, 0 };
-
-	static int min;
-	static int W, H;
-
-	static void bfs(int[][] map, int x, int y, int cnt, int K) {
-
-		int[][][] cntMap = new int[H][W][2];
-		for (int i = 0; i < H; i++)
-			for (int j = 0; j < W; j++) {
-				cntMap[i][j][0] = Integer.MAX_VALUE;
-				cntMap[i][j][1] = -1;
-			}
-
-		Queue<Point2> q = new LinkedList<>();
-		q.add(new Point2(x, y, 0, K));
-		cntMap[x][y][0] = 0;
-		cntMap[x][y][1] = K;
-
-		while (!q.isEmpty()) {
-			Point2 cur = q.poll();
-			if (cur.cnt >= min)
-				continue;
-			if (cur.x == H - 1 && cur.y == W - 1) {
-				min = Math.min(min, cur.cnt);
-				continue;
-			}
-
-			int nx, ny;
-			if (cur.k != 0) {
-				for (int d = 0; d < 8; d++) {
-					nx = cur.x + hdx[d];
-					ny = cur.y + hdy[d];
-
-					if (nx < 0 || nx >= H || ny < 0 || ny >= W || map[nx][ny] == 1)
-						continue;
-					if (cur.cnt + 1 >= cntMap[nx][ny][0] && cur.k - 1 <= cntMap[nx][ny][1])
-						continue;
-
-					/*
-					 * if (cur.k - 1 <= cntMap[nx][ny][1] || cur.cnt + 1 >= cntMap[nx][ny][0])
-					 * continue;
-					 */
-					cntMap[nx][ny][0] = cur.cnt + 1;
-					cntMap[nx][ny][1] = cur.k - 1;
-					q.add(new Point2(nx, ny, cur.cnt + 1, cur.k - 1));
-
-				}
-			}
-			for (int d = 0; d < 4; d++) {
-				nx = cur.x + dx[d];
-				ny = cur.y + dy[d];
-
-				if (nx < 0 || nx >= H || ny < 0 || ny >= W || map[nx][ny] == 1)
-					continue;
-				if (cur.cnt + 1 >= cntMap[nx][ny][0] && cur.k <= cntMap[nx][ny][1])
-					continue;
-
-				cntMap[nx][ny][0] = cur.cnt + 1;
-				cntMap[nx][ny][1] = cur.k;
-				q.add(new Point2(nx, ny, cur.cnt + 1, cur.k));
-			}
-
+		public Monkey(int x, int y, int k) {
+			super();
+			this.x = x;
+			this.y = y;
+			this.k = k;
 		}
-
 	}
-
+	
+	static final int[] dx = {-1, 1, 0, 0, -2, -1, 1, 2, 2, 1, -1, -2};
+	static final int[] dy = {0, 0, -1, 1, 1, 2, 2, 1, -1, -2, -2, -1};
+	
 	public static void main(String[] args) throws IOException {
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
-		int K = Integer.parseInt(br.readLine());
+		
+		int K = Integer.parseInt(br.readLine())+1;
+		
 		st = new StringTokenizer(br.readLine());
-
-		W = Integer.parseInt(st.nextToken());
-		H = Integer.parseInt(st.nextToken());
-
-		int[][] map = new int[H][W];
-
-		for (int i = 0; i < H; i++) {
+		int W = Integer.parseInt(st.nextToken());
+		int H = Integer.parseInt(st.nextToken());
+		
+		char[][] map = new char[H][W];
+		for(int i = 0; i < H; ++i) {
 			st = new StringTokenizer(br.readLine());
-			for (int j = 0; j < W; j++)
-				map[i][j] = Integer.parseInt(st.nextToken());
+			for(int j = 0; j < W; ++j)
+				map[i][j] = st.nextToken().charAt(0);
 		}
-		min = Integer.MAX_VALUE;
+		
+		System.out.println(simulation(K, H, W, map));
+		
+	}
 
-		bfs(map, 0, 0, 0, K);
-		if (min == Integer.MAX_VALUE)
-			System.out.println(-1);
-		else
-			System.out.println(min);
 
+
+	private static int simulation(int K, int H, int W, char[][] map) {
+		int INF = Integer.MAX_VALUE;
+		// K에 대한 방문 처리 배역을 만든다
+		int[][] visit = new int[H][W];
+		visit[0][0] = K;
+		
+		Monkey monkey = new Monkey(0, 0, K);
+		Monkey cur;
+		
+		Queue<Monkey> q = new LinkedList<>();
+		q.add(monkey);
+		
+		int qSize, move = 0;
+		int nx, ny;
+		
+		while(!q.isEmpty()) {
+			
+			// 같은 이동거리를 가지는 원소들에 대해서만 이동 처리
+			qSize = q.size();
+			while(qSize-- > 0) {
+				cur = q.poll();
+				
+				// 목적지에 도착한 경우,
+				if(cur.x == H-1 && cur.y == W-1) return move;
+				// K가 남아있다면 말로 이동
+				if(cur.k != 1) {
+					for(int d = 4; d < 12; ++d) {
+						nx = cur.x + dx[d];
+						ny = cur.y + dy[d];
+						
+						// 격자 밖이거나, 벽이고, 해당 위치에 K이동횟수를 가지고 이미 방문한 적이 있는지 확인
+						if(nx < 0 || nx >= H || ny < 0 || ny >=W 
+								|| map[nx][ny] == '1' 
+								|| visit[nx][ny] >= cur.k-1) 
+							continue;
+						
+						visit[nx][ny] = cur.k-1;
+						q.offer(new Monkey(nx, ny, cur.k-1));
+					}
+				}
+				
+				// K가 남아있는지 상관 없이 일반적인 인접 이동
+				for(int d = 0; d < 4; ++d) {
+					nx = cur.x + dx[d];
+					ny = cur.y + dy[d];
+					
+					// 격자 밖이거나, 벽이고, 해당 위치에 K이동횟수를 가지고 이미 방문한 적이 있는지 확인
+					if(nx < 0 || nx >= H || ny < 0 || ny >=W || map[nx][ny] == '1' || visit[nx][ny] >= cur.k ) continue;
+					
+					visit[nx][ny] = cur.k;
+					q.offer(new Monkey(nx, ny, cur.k));
+				}
+			}
+			
+			++move;
+			
+		}
+		
+		return -1;
+		
 	}
 
 }
