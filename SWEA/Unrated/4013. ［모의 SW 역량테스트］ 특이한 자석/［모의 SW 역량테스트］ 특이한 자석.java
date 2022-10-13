@@ -9,73 +9,71 @@ import java.util.StringTokenizer;
 
 public class Solution {
 
-	static int K, N;
-	static LinkedList<Character>[] magnet;
-	static boolean[] visit;
-	static boolean direction;
+	static char[][] gear;
+	static int[] gearDir;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 
 		int T = Integer.parseInt(br.readLine());
-		N = 4;
+		int N = 4, K, score;
 		for (int tc = 1; tc <= T; tc++) {
 
 			K = Integer.parseInt(br.readLine());
-
-			magnet = new LinkedList[N];
-			for (int i = 0; i < 4; i++) {
+			
+			gear = new char[4][8];
+			for(int i = 0; i < 4; ++i) {
 				st = new StringTokenizer(br.readLine());
-				magnet[i] = new LinkedList<>();
-				for (int j = 0; j < 8; j++) {
-					magnet[i].add(st.nextToken().charAt(0));
+				for(int j = 0; j < 8; ++j) {
+					gear[i][j] = st.nextToken().charAt(0);
 				}
 			}
 
-			for (int i = 0; i < K; i++) {
+			gearDir = new int[4];
+			int num, d;
+			while(K-- > 0) {
 				st = new StringTokenizer(br.readLine());
-				int no = Integer.parseInt(st.nextToken()) -1 ;
-				direction = (st.nextToken().charAt(0) == '1') ? true : false;
-				visit = new boolean[N];
-
-				recursive(no, direction);
+				num = Integer.parseInt(st.nextToken())-1;
+				d = (Integer.parseInt(st.nextToken()) > 0 )? 1 : 0;
+				
+				rotate(num, d, 3);
 			}
-
-			int score = 0;
-			for (int i = 0; i < N; i++) {
-				score += Math.pow(2, i) * (magnet[i].get(0) - '0');
-			}
-			sb.append("#" + tc + " " + score + "\n");
+			
+			score = 0;
+			score += (gear[0][gearDir[0]] == '1' ? 1 : 0);
+			score += (gear[1][gearDir[1]] == '1' ? 2 : 0);
+			score += (gear[2][gearDir[2]] == '1' ? 4 : 0);
+			score += (gear[3][gearDir[3]] == '1' ? 8 : 0);
+			
+			System.out.printf("#%d %d\n", tc, score);
+			
 		} // tc 종료
 
-		bw.write(sb.toString());
-		bw.close();
-
 	}
 
-	private static void recursive(int no, boolean direction) {
-		if (visit[no])	return;
+	private static void rotate(int num, int d, int arrow) {
 
-		visit[no] = true;
-
-		// 왼쪽 비교
-		if (no > 0 && !visit[no-1] && magnet[no - 1].get(2) != magnet[no].get(6))
-			recursive(no - 1, !direction);
-		// 오른쪽 비교
-		if (no < N - 1 && !visit[no+1] && magnet[no + 1].get(6) != magnet[no].get(2))
-			recursive(no + 1, !direction);
-
-		rotate(no, direction);
-	}
-
-	private static void rotate(int no, boolean direction) {
-		if (direction)
-			magnet[no].addFirst(magnet[no].pollLast());
-		else
-			magnet[no].add(magnet[no].poll());
+		int ldir, dir, rdir;
+		// 왼쪽
+		if(((arrow & 2) != 0)  && num > 0) {
+			ldir = (gearDir[num-1]+2)%8;
+			dir = (gearDir[num]+6)%8;
+			
+			if(gear[num-1][ldir] != gear[num][dir]) rotate(num-1, d^1, 2);
+		}
+		
+		// 오른쪽
+		if(((arrow & 1) != 0) && num < 3) {
+			dir = (gearDir[num]+2) % 8;
+			rdir = (gearDir[num+1]+6) % 8;
+			
+			if(gear[num][dir] != gear[num+1][rdir]) rotate(num+1, d^1, 1);
+		}
+		
+		// rotate
+		if(d == 1) 	gearDir[num] = (gearDir[num] + 7) % 8;
+		else gearDir[num] = (gearDir[num] + 1) % 8;
 	}
 
 }
