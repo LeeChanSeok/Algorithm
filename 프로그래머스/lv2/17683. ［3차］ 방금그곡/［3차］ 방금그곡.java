@@ -39,28 +39,6 @@ class Solution {
         return answer;
     }
 
-    private boolean isMatch(String heard, String music, int time) {
-
-        int heardLen = heard.length();
-        int musicLen = music.length();
-
-        int j, k;
-        for (int i = 0; i < musicLen; ++i) {
-            k = i;
-
-            for (j = 0; j < heardLen; ++j) {
-                if (music.charAt(k) != heard.charAt(j))
-                    break;
-                k = (++k) % musicLen;
-            }
-
-            if(j == heardLen) return true;
-
-        }
-
-        return false;
-    }
-
     private String changeMusic(String m) {
         int delta = 'a' - 'A';
         String n = "";
