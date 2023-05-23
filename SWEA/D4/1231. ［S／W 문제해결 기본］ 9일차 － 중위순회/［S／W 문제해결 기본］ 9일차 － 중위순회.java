@@ -1,52 +1,72 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
 public class Solution {
-	static final int T = 10;
-	static int N, level, maxIdx;
-	static char[] binaryTree;
-	static StringBuilder sb  = new StringBuilder(); 
 	
-	public static void main(String[] args) throws IOException {
+	static class Node{
+		char c;
+		int L, R;
+						
+		public Node(char c, int l, int r) {
+			super();
+			this.c = c;
+			L = l;
+			R = r;
+		}
+		
+	}
+	
+	static Node[] graph;
+	static StringBuilder sb;
+	
+	public static void main(String[] args) throws Exception {
+		//System.setIn(new FileInputStream("src/com/swea/B형특강/Day2/No1_중위순회/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		sb = new StringBuilder();
 		StringTokenizer st;
 		
-		for(int tc = 1; tc <= T; tc++) {
-			N = Integer.parseInt(br.readLine());
+		int T = 10;
+		for(int tc = 1; tc <= 10; ++tc) {
+			int N = Integer.parseInt(br.readLine());
 			
-			level = (int)Math.sqrt(N);
-			maxIdx = (int)Math.pow(2, level+1)+1;
-			binaryTree = new char[maxIdx];
+			graph = new Node[N+1];
 			
-			for(int i = 0; i < N; i++) {
+			for(int i = 0; i < N; ++i) {
 				st = new StringTokenizer(br.readLine());
-				int nodeNum = Integer.parseInt(st.nextToken());
-				char word = st.nextToken().charAt(0);
 				
-				binaryTree[nodeNum] = word;
+				int num = Integer.parseInt(st.nextToken());
+				char c = st.nextToken().charAt(0);
+				
+				int L = -1, R = -1;
+				if(st.hasMoreElements()) L = Integer.parseInt(st.nextToken());
+				if(st.hasMoreElements()) R = Integer.parseInt(st.nextToken());
+				
+				graph[num] = new Node(c, L, R);
+				
 			}
 			
-			sb.append("#" + tc + " ");
-			inOrder(1);
+			sb.append("#"  + tc + " ");
+			in_order(1);
 			sb.append("\n");
 			
-		}//tc 종료
-
+		}
 		bw.write(sb.toString());
 		bw.close();
+
 	}
-	private static void inOrder(int node) {
+
+	private static void in_order(int idx) {
+
+		if(idx == -1) return;
 		
-		if(node > N || node >= maxIdx) return;
-		
-		inOrder(node * 2);
-		sb.append(binaryTree[node]);
-		inOrder(node * 2 + 1);
+		in_order(graph[idx].L);
+		sb.append(graph[idx].c);
+		in_order(graph[idx].R);
 		
 	}
 
