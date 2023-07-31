@@ -14,6 +14,7 @@ public class Main {
 
 		int fibo1 = 0, fibo2 = 1;
 		
+		if(n == 0) fibo2 = 0;
 		for(int i = 2; i <= n; ++i) {
 			int temp = fibo2;
 			fibo2 = (fibo1 + fibo2) % 1000000007;
