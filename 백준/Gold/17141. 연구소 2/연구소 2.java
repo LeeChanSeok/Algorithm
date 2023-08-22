@@ -1,6 +1,6 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,147 +9,124 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-	static class Point{
-		int x, y;
+	static int[] dx = {-1, 1, 0, 0};
+	static int[] dy = {0, 0, -1, 1};
+	
+	static int INF = Integer.MAX_VALUE;
+	static int n, m, ans;
+	static int[][] board;
+	static List<int[]> mPnt;
+	static int mCnt;
+	
+	public static void main(String[] args) throws Exception {
+		
+		input();
+		pro();
+	}
 
-		public Point(int x, int y) {
-			super();
-			this.x = x;
-			this.y = y;
-		}
+	private static void pro() {
+		
+		ans = INF;
+		recursive(0, 0, 0);
+		if(ans == INF) ans = -1;
+		
+		System.out.println(ans);
+		
 	}
 	
-	static final int[] dx = {-1, 1, 0, 0};
-	static final int[] dy = {0, 0, -1, 1};
 
-	static int N, M, candiSize, idx, min;
-	static int[][][] distBoard;
-	static char[][] board;
-	static List<Point> candi; 
-	
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
-		
-		board = new char[N][N];
-		char c;
-		candi = new LinkedList<>();
-		for(int i = 0; i < N; ++i) {
-			st = new StringTokenizer(br.readLine());
-			for(int j = 0; j < N; ++j) {
-				c = st.nextToken().charAt(0);
-				if(c =='2') candi.add(new Point(i, j));
-				board[i][j] = c;
-			}
-		}
+	private static void recursive(int cnt, int idx, int flag) {
 
-		candiSize = candi.size();
-		distBoard = new int[candiSize][N][N];
-		idx = 0;
-		for(Point pos : candi) {
-			makeDist(board, distBoard, idx++, pos);
-		}
-		
-		// 조합
-		min = 1000;
-		int[] comb = new int[M];
-		combination(0, 0, comb);
-
-		if(min == 1000) System.out.println(-1);
-		else System.out.println(min);
-
-	}
-	private static void combination(int idx, int cnt, int[] comb) {
-		
-		if(cnt == M) {
-			int res = minDist(comb);
-			min = Math.min(min, res);
+		if(cnt == m) {
+			int res = bfs(flag);
+			ans = Math.min(ans, res);
 			return;
 		}
 		
-		for(int i = idx; i < candiSize; ++i) {
-			comb[cnt] = i;
-			combination(i + 1, cnt + 1, comb);
-		}
-		
-	}
-	
-	private static int minDist(int[] comb) {
-		int[][] mergeBoard = new int[N][N];
-		for(int i = 0; i < N; ++i)
-			mergeBoard[i] = distBoard[comb[0]][i].clone();
-		
-		int idx;
-		for(int k = 1; k < M; ++k) {
-			idx = comb[k];
-			
-			for(int i = 0; i < N; ++i) {
-				for(int j = 0; j < N; ++j) {
-					mergeBoard[i][j] = Math.min(mergeBoard[i][j], distBoard[idx][i][j]);
-				}
+		for(int i = idx; i < mCnt; ++i) {
+			if(((1 << i) & flag) == 0) {
+				recursive(cnt + 1, i + 1, flag | (1 << i));
 			}
 		}
 		
-		return calcMinDist(mergeBoard, board);
 	}
-	
-	private static int calcMinDist(int[][] mergeBoard, char[][] board) {
+
+	private static int bfs(int flag) {
+
+		int[][] visited = new int[n][n];
+		for(int i = 0; i < n; ++i) {
+			Arrays.fill(visited[i], INF);
+		}
 		
-		int max = 0;
+		Queue<int[]> q = new LinkedList<>();
 		
-		for(int i = 0; i < N; ++i) {
-			for(int j = 0; j < N; ++j) {
-				
-				if(mergeBoard[i][j] == 1000) {
-					if(board[i][j] == '0') return 1000;
-					continue;
-				}
-				max = Math.max(max, mergeBoard[i][j]);
+		for(int i = 0; i < mCnt; ++i) {
+			if(((1 << i) & flag) != 0) {
+				int[] pnt = mPnt.get(i);
+				q.offer(pnt);
+				visited[pnt[0]][pnt[1]] = 0;
 			}
 		}
 		
-		return max;
-	}
-	
-	private static void makeDist(char[][] board, int[][][] distBoard, int idx, Point pos) {
-		
-		int INF = 1000;
-		
-		Queue<Point> q = new LinkedList<>();
-		q.offer(pos);
-		
-		boolean[][] visit = new boolean[N][N];
-		
-		for(int i = 0; i < N; ++i)
-			Arrays.fill(distBoard[idx][i], INF);
-		
-		distBoard[idx][pos.x][pos.y] = 0;
-		
-		int qSize, dist = 0;
-		int nx, ny;
-		Point cur;
+		int cnt = 0;
 		while(!q.isEmpty()) {
-			qSize = q.size();
-			++dist;
+			int qSize = q.size();
+			++cnt;
+			
 			while(qSize-- > 0) {
-				cur = q.poll();
+				
+				int[] cur = q.poll();
 				for(int d = 0; d < 4; ++d) {
-					nx = cur.x + dx[d];
-					ny = cur.y + dy[d];
+					int nx = cur[0] + dx[d];
+					int ny = cur[1] + dy[d];
 					
-					if(nx < 0 || nx >= N || ny < 0 || ny >= N || board[nx][ny] == '1' || distBoard[idx][nx][ny] <= dist) continue;
+					if(nx < 0 || nx >= n || ny < 0 || ny >= n) continue;
+					if(visited[nx][ny] != INF) continue;
+					if(board[nx][ny] == 1) continue;
 					
-					distBoard[idx][nx][ny] = dist;
-					q.offer(new Point(nx, ny));
-					
+					visited[nx][ny] = cnt;
+					q.offer(new int[] {nx, ny});
 				}
+				
+			}
+			
+		}
+		
+		for(int i = 0; i < n; ++i) {
+			for(int j = 0; j < n; ++j) {
+				if(board[i][j] != 1 && visited[i][j] == INF) return INF;
 			}
 		}
 		
+		return cnt - 1;
+	}
+
+	private static void input() throws Exception {
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		
+		n = Integer.parseInt(st.nextToken());
+		m = Integer.parseInt(st.nextToken());
+		
+		board = new int[n][n];
+		for(int i = 0; i < n; ++i) {
+			st = new StringTokenizer(br.readLine());
+			for(int j = 0; j < n; ++j) {
+				board[i][j] = Integer.parseInt(st.nextToken());
+			}
+		}
+	
+		mPnt = new ArrayList<>();
+		for(int i = 0; i < n; ++i) {
+			for(int j = 0; j < n; ++j) {
+				if(board[i][j] == 2) mPnt.add(new int[] {i, j});
+			}
+		}
+	
+		mCnt = mPnt.size();
 		
 	}
+
 
 }
