@@ -14,24 +14,19 @@ public class Main {
 	}
 
 	private static void pro() {
-
-		for(int i = 1; i <= n; ++i) {
-			subSum[i] = subSum[i-1] + num[i];
-		}
 		
+		int s = 0;
+		int e = 0;
 		long ans = 0;
+		long sum = 0;
 		
-		for(int s = 1; s <= n; ++s) {
-			
-			if(subSum[n] - subSum[s-1] < k) break;
-			for(int e = s; e <= n; ++e) {
-				long sum = subSum[e] - subSum[s-1];
-				if(sum > k) {
-					ans += n - e + 1;
-					break;
-				}
+		while(e <= n) {
+			if(sum > k) {
+				ans += n - e + 1;
+				sum -= num[s++];
+			}else {
+				sum += num[e++];
 			}
-			
 		}
 		
 		System.out.println(ans);
@@ -44,10 +39,9 @@ public class Main {
 		
 		n = Integer.parseInt(br.readLine());
 		num = new int[n+1];
-		subSum = new long[n+1];
 		
 		st = new StringTokenizer(br.readLine());
-		for(int i = 1; i <= n; ++i) num[i] = Integer.parseInt(st.nextToken());
+		for(int i = 0; i < n; ++i) num[i] = Integer.parseInt(st.nextToken());
 		
 		k = Integer.parseInt(br.readLine());
 	}
