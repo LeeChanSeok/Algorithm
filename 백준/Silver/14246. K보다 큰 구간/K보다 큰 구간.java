@@ -4,37 +4,52 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-	public static void main(String[] args) throws Exception {
+	static int n, k;
+	static int[] num;
+	static long[] subSum;
+	
+	public static void main(String[] args) throws Exception{
+		input();
+		pro();
+	}
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
+	private static void pro() {
 
-		int N = Integer.parseInt(br.readLine());
-		int[] numbers = new int[N];
-		
-		st = new StringTokenizer(br.readLine());
-		for (int i = 0; i < N; ++i)
-			numbers[i] = Integer.parseInt(st.nextToken());
-		
-		int K = Integer.parseInt(br.readLine());
+		for(int i = 1; i <= n; ++i) {
+			subSum[i] = subSum[i-1] + num[i];
+		}
 		
 		long ans = 0;
-		int s, e, sum;
-		s = e = 0;
-		sum = numbers[0];
-		while(e < N) {
+		
+		for(int s = 1; s <= n; ++s) {
 			
-			if(sum > K) {
-				ans += (N - e);
-				sum -= numbers[s++];
-			}else {
-				if(e == N-1) break;
-				sum += numbers[++e];
+			if(subSum[n] - subSum[s-1] < k) break;
+			for(int e = s; e <= n; ++e) {
+				long sum = subSum[e] - subSum[s-1];
+				if(sum > k) {
+					ans += n - e + 1;
+					break;
+				}
 			}
-			if(e < s) e = s;
+			
 		}
 		
 		System.out.println(ans);
+	}
+
+	private static void input() throws Exception{
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
+		
+		n = Integer.parseInt(br.readLine());
+		num = new int[n+1];
+		subSum = new long[n+1];
+		
+		st = new StringTokenizer(br.readLine());
+		for(int i = 1; i <= n; ++i) num[i] = Integer.parseInt(st.nextToken());
+		
+		k = Integer.parseInt(br.readLine());
 	}
 
 }
