@@ -8,9 +8,9 @@ public class Main {
 
 	static class Info {
 		int x, y;
-		boolean chance;
+		int chance;
 
-		public Info(int x, int y, boolean chance) {
+		public Info(int x, int y, int chance) {
 			super();
 			this.x = x;
 			this.y = y;
@@ -43,7 +43,7 @@ public class Main {
 		int INF = 987654321;
 
 		Queue<Info> q = new LinkedList<>();
-		q.offer(new Info(hx, hy, true));
+		q.offer(new Info(hx, hy, 1));
 
 		boolean[][][] visited = new boolean[n][m][2];
 
@@ -55,54 +55,29 @@ public class Main {
 
 			while (qSize-- > 0) {
 				Info cur = q.poll();
-				if (cur.x == ex && cur.y == ey) {
+				if (cur.x == ex && cur.y == ey)
 					return move;
-				}
 
-				if (!cur.chance && visited[cur.x][cur.y][1])
-					continue;
+				for (int d = 0; d < 4; ++d) {
+					int nx = cur.x + dx[d];
+					int ny = cur.y + dy[d];
 
-				if (cur.chance) {
-					for (int d = 0; d < 4; ++d) {
-						int nx = cur.x + dx[d];
-						int ny = cur.y + dy[d];
+					if (nx < 0 || nx >= n || ny < 0 || ny >= m)	continue;
+					if (visited[nx][ny][cur.chance]) continue;
 
-						if (nx < 0 || nx >= n || ny < 0 || ny >= m)
-							continue;
-						if (board[nx][ny]) {
-							if (visited[nx][ny][0])
-								continue;
-							visited[nx][ny][0] = true;
-							q.offer(new Info(nx, ny, false));
-						} else {
-							if (visited[nx][ny][1])
-								continue;
-							visited[nx][ny][1] = true;
-							q.offer(new Info(nx, ny, true));
-						}
-
-					}
-				} else {
-					for (int d = 0; d < 4; ++d) {
-						int nx = cur.x + dx[d];
-						int ny = cur.y + dy[d];
-
-						if (nx < 0 || nx >= n || ny < 0 || ny >= m)
-							continue;
-						if (board[nx][ny])
-							continue;
-						if (visited[nx][ny][0] || visited[nx][ny][1])
-							continue;
-
+					if (!board[nx][ny]) {
+						visited[nx][ny][cur.chance] = true;
+						q.offer(new Info(nx, ny, cur.chance));
+					}else if(cur.chance == 1) {
 						visited[nx][ny][0] = true;
-						q.offer(new Info(nx, ny, false));
-
+						q.offer(new Info(nx, ny, 0));
 					}
+
 				}
 			}
 			++move;
 		}
-		
+
 		return -1;
 	}
 
