@@ -34,7 +34,7 @@ public class Main {
 			}
 			
 		}
-
+		
 		System.out.println(sb);
 	}
 
@@ -43,16 +43,15 @@ public class Main {
 		int x = getParent(a);
 		int y = getParent(b);
 		
-		parents[y] = x;
+		if(x < y) parents[y] = x;
+		else parents[x] = y;
 		
 	}
 
 	private static int getParent(int a) {
 		
 		if(a == parents[a]) return a;
-		else parents[a] = getParent(parents[a]);
-		
-		return parents[a];
+		return parents[a] = getParent(parents[a]);
 	}
-
+	
 }
