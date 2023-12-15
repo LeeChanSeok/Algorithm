@@ -98,8 +98,7 @@ public class Main {
 			sticker[i][0] = Integer.parseInt(st.nextToken());
 			sticker[i][1] = Integer.parseInt(st.nextToken());
 		}
-		
-		Arrays.sort(sticker, (s1, s2) -> s2[0]*s2[1] - s1[0]*s1[1]);
+
 	}
 
 }
