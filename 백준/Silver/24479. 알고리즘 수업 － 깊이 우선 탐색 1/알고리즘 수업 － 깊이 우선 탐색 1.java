@@ -14,6 +14,7 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder sb = new StringBuilder();
 		StringTokenizer st = new StringTokenizer(br.readLine());
 
 		n = Integer.parseInt(st.nextToken());
@@ -43,9 +44,10 @@ public class Main {
 		step = 1;
 		dfs(r);
 		
-		for(int i = 1; i <= n; ++i) {
-			System.out.println(visited[i]);
-		}
+        for (int i = 1; i <= n; i++) {
+        	sb.append(visited[i]).append('\n');
+        }
+        System.out.println(sb);
 	}
 
 	private static void dfs(int r) {
