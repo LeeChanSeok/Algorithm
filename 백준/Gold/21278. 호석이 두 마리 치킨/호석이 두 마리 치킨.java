@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 public class Main {
 	static int INF = (int)1e9;
 	static int n, m;
-	static List<Integer>[] graph;
+	static int[][] graph;
 	static int[][] D;
 	
 	public static void main(String[] args) throws Exception {
@@ -20,9 +20,10 @@ public class Main {
 		n = Integer.parseInt(st.nextToken());
 		m = Integer.parseInt(st.nextToken());
 		
-		graph = new List[n+1];
+		D = new int[n+1][n+1];
 		for(int i = 1; i <= n; ++i) {
-			graph[i] = new LinkedList<>();
+			Arrays.fill(D[i], INF);
+			D[i][i] = 0;
 		}
 		
 		for(int i = 0; i < m; ++i) {
@@ -31,29 +32,31 @@ public class Main {
 			int u = Integer.parseInt(st.nextToken());
 			int v = Integer.parseInt(st.nextToken());
 			
-			graph[u].add(v);
-			graph[v].add(u);
+			D[u][v] = D[v][u] = 1;
 		}
 		
-		D = new int[n+1][n+1];
 		
-		bfs();
-		
-		int[] ans = new int[3];
-		ans[2] = Integer.MAX_VALUE;
-		
-		for(int i = 1; i < n; ++i) {			
+		for (int k = 1; k <= n; ++k) {
+			for(int i = 1; i <= n; ++i) {			
+				for(int j = 1; j <= n; ++j) {
+					D[i][j] = Math.min(D[i][j], D[i][k] + D[k][j]);
+				}
+			}
+		}
+
+		int[] ans = new int[] {0, 0, INF};
+		for(int i = 1; i < n; ++i) {
 			for(int j = i + 1; j <= n; ++j) {
-				int res = 0;
+				int sum = 0;
 				for(int k = 1; k <= n; ++k) {
-					res += Math.min(D[i][k], D[j][k]);
+					sum += Math.min(D[i][k], D[j][k]);
 				}
 				
-				if(res < ans[2]) ans = new int[] {i, j, res};
+				if(ans[2] > sum) ans = new int[] {i, j, sum};
 			}
 		}
 		
-		System.out.println(ans[0] + " " + ans[1] + " " + ans[2]*2);
+		System.out.println(ans[0] + " " + ans[1] + " " + ans[2] * 2);
 
 	}
 
