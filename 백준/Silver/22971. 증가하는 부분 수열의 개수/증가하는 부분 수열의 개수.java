@@ -34,7 +34,7 @@ public class Main {
         if(D[idx] != 0) return D[idx];
 
         int sum = 0;
-        for (int j = idx - 1; j >= 0; --j){
+        for (int j = 0; j < idx; ++j){
             if(arr[j] < arr[idx]) sum = (sum + LIS(j)) % MOD;
             else LIS(j);
         }
