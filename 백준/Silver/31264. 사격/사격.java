@@ -28,15 +28,23 @@ public class Main {
 
 	}
 
-	private static int binarySearch() {
+	private static long binarySearch() {
 
-		int l = 1, r = 100000;
-		int res = r;
+		long l = 0, r = 100000;
+		long res = r;
 		while (l <= r) {
-			int mid = (l + r) / 2;
+			long mid = (l + r) / 2;
 
-			if (shooting(mid)) {
-				res = mid;
+			long avil = mid;
+			long score = 0;
+			for (int i = 0; i < M; ++i) {
+				int v = shooting(avil);
+				avil += v;
+				score += v;
+			}
+
+			if (score >= A) {
+				res = Math.min(res, mid);
 				r = mid - 1;
 			} else {
 				l = mid + 1;
@@ -47,31 +55,21 @@ public class Main {
 
 	}
 
-	private static boolean shooting(int target) {
-		
-		int score = 0;
-		int avil = target;
-		for (int i = 0; i < M; ++i) {
-			int l = 0, r = N-1;
-			int idx = N;
-			while (l <= r) {
-				int mid = (l + r) / 2;
+	private static int shooting(long target) {
 
-				if (arr[mid] > avil) {
-					idx = Math.min(idx, mid);
-					r = mid - 1;
-				} else {
-					l = mid + 1;
-				}
+		int l = 0, r = N - 1;
+		int score = 0;
+		while (l <= r) {
+			int mid = (l + r) / 2;
+
+			if (arr[mid] <= target) {
+				score = Math.max(score, arr[mid]);
+				l = mid + 1;
+			} else {
+				r = mid - 1;
 			}
-			if(idx == 0) return false;
-			score += arr[idx - 1];
-			avil += arr[idx - 1];
 		}
-		
-		if (score >= A)
-			return true;
-		return false;
+		return score;
 	}
 
 }
