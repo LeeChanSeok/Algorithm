@@ -18,7 +18,7 @@ public class Main {
 		long ans = 0;
 		for (int i = 0; i < n - 1; ++i) {
 			long diff = target - A[i];
-			ans += diff;
+			ans += Math.abs(diff);
 			A[i + 1] -= diff;
 		}
 
