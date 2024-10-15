@@ -1,0 +1,11 @@
+-- 코드를 작성해주세요
+SELECT ID, EMAIL, FIRST_NAME, LAST_NAME
+FROM DEVELOPERS
+WHERE ID in 
+    (
+        SELECT ID
+        FROM DEVELOPERS D
+        JOIN SKILLCODES S
+        on D.SKILL_CODE & S.CODE = S.CODE
+        WHERE NAME = 'C#' or NAME = 'Python')
+ORDER BY ID
