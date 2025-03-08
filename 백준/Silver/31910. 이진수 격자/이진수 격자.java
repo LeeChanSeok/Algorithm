@@ -5,7 +5,8 @@ import java.util.StringTokenizer;
 public class Main {
 
 	static int N;
-	static int[][] A, B;
+	static int[][] A;
+	static long[][] B;
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -21,7 +22,7 @@ public class Main {
 			}
 		}
 
-		B = new int[N][N];
+		B = new long[N][N];
 		B[0][0] = A[0][0];
 
 		for (int i = 1; i < N; ++i) {
